@@ -51,7 +51,6 @@ def manual_config():
             "name": name
         }
         add_new = y_n_choice("Would you like to add another port configuration?")
-
     return config
 
 # User input to create and save a new config file

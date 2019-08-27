@@ -14,7 +14,8 @@ import serialConf
 from listMenu import menu
 
 def open_connection(ser):
-    ser.open()
+    if not ser.is_open:
+        ser.open()
     return ser.is_open
 
 def test_connection(ser):
