@@ -12,6 +12,7 @@ import serial.tools.list_ports
 import serial.serialutil
 import serialConf
 from listMenu import menu
+from serial_cli import SerialCli
 
 def open_connection(ser):
     if not ser.is_open:
@@ -39,6 +40,7 @@ def test_configuration(conf):
         except serial.serialutil.SerialException as e:
             print (e)
 
+@DeprecationWarning
 def connect_manual_serial(ser):
     con = str(raw_input("> Open connection? [y/n]\n"))
     if con == "y":
@@ -70,21 +72,29 @@ def connect_manual_serial(ser):
 # Allows the user to choose a port within the selected configuration
 # Returns the serial object with the  proper configuration loaded
 def choose_port_and_connect(conf):
-    p = menu(conf.keys(), "Please select a port to open")
-    try:
-        s = serial.Serial(port=conf[p]["port"], baudrate=conf[p]["baudrate"], timeout=conf[p]["timeout"])
-        if test_connection(s):
-            connect_manual_serial(s)
-        else:
+    ex = False
+    while not ex:
+        p = menu(conf.keys(), "Please select a port to connect to")
+        try:
+            s = serial.Serial(port=conf[p]["port"], baudrate=conf[p]["baudrate"], timeout=conf[p]["timeout"])
+            if test_connection(s):
+                # connect_manual_serial(s)
+                SerialCli(s).cli()
+            else:
+                print("> Impossible to connect to serial port " + p)
+        except serial.serialutil.SerialException as e:
             print("> Impossible to connect to serial port " + p)
-    except serial.serialutil.SerialException as e:
-        print("> Impossible to connect to serial port " + p)
-        print(e)
+            print(e)
+
 
 def main():
-    conf = serialConf.load_config()
-    test_configuration(conf)
-    choose_port_and_connect(conf)
+    try:
+        conf = serialConf.load_config()
+        test_configuration(conf)
+        choose_port_and_connect(conf)
+    except KeyboardInterrupt:
+        print("> Keyboard Interrupt detected. Exiting.")
+        quit(1)
 
 if __name__ == '__main__':
     main()

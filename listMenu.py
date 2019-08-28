@@ -1,4 +1,9 @@
-
+"""
+ListMenu.py -> Python menu tools and functions
+Author: Michel Cantacuzene <michel@thesweaterguys.com>
+GitHub: michmich112
+Copyright: The Sweater Guys
+"""
 
 # function that takes in an array of values and prompts the user to select one
 # returns selected value
@@ -7,7 +12,7 @@ def menu(values, message=None):
     for i in range(len(values)):
         print("[" + str(i) + "] " + str(values[i]))
     choice = input_handler("enter a number between 0 and " + str(len(values)-1)+": ", acc_type=int,retry=True)
-    while(choice>=len(values) or choice<0):
+    while choice>=len(values) or choice<0 :
         choice = input_handler("enter a number between 0 and " + str(len(values) - 1) + ": ", acc_type=int, retry=True)
     return values[choice]
 
