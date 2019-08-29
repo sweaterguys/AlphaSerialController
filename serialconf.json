@@ -1,1 +1,1 @@
-{"/dev/ttyS19": {"baudrate": 115200, "port": "/dev/ttyS19", "timeout": 1, "name": "ESP32"}}
+{"/dev/ttyS19": {"baudrate": 115200, "port": "/dev/ttyS19", "timeout": 1, "name": "ESP32"}, "/dev/ttyS20": {"baudrate": 115200, "port": "/dev/ttyS20", "timeout": 1, "name": "GRBL"}}

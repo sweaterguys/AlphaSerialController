@@ -5,6 +5,8 @@ GitHub: michmich112
 Copyright: The Sweater Guys
 """
 
+# TODO create threaded receiver class that checks the serial for input from the input buffer and doesnt block user input
+
 from os import path
 from time import  sleep
 from listMenu import y_n_choice
@@ -179,7 +181,9 @@ class SerialCli:
                 print("> Sending \"" + inp + "\"")
                 self.ser.write(inp + "\n")  # Add EOL character
                 self.ser.flush()  # Flush input stream
-                print("> Received: " + self.ser.readline())
+                print("> Received: " + self.ser.readline().strip())
+                while self.ser.in_waiting > 0:
+                    print(" "*12 + self.ser.readline().strip())
                 inp = str(raw_input(">"))
             print("> Stopping conversation with port " + str(self.ser.port))
             print("> Converse [END]")
