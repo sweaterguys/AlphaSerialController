@@ -182,8 +182,7 @@ class SerialCli:
                 self.ser.write(inp + "\n")  # Add EOL character
                 self.ser.flush()  # Flush input stream
                 print("> Received: " + self.ser.readline().strip())
-                while self.ser.in_waiting > 0:
-                    print(" "*12 + self.ser.readline().strip())
+                self.get_all_input(lambda l: printf(" "*12 + l))
                 inp = str(raw_input(">"))
             print("> Stopping conversation with port " + str(self.ser.port))
             print("> Converse [END]")
@@ -191,6 +190,20 @@ class SerialCli:
             print("> Keyboard Interrupt Detected")
             print("> Stopping conversation with port " + str(self.ser.port))
             print("> Converse [END]")
+
+    # Api for easy direct communication with a port
+    def direct(self, message, timeout=100, force=False):
+        self.get_all_input(lambda l : printf(">> RX " + self.ser.port + " > " + l))
+        self.ser.write(message)
+        self.ser.flush()
+        print (">> TX " + self.ser.port + " > " + message.replace("\n",""))
+        inc = 0
+        while (self.ser.in_waiting == 0 and inc < timeout) or force:
+            sleep(1/100000.0)
+            inc+=1
+        self.get_all_input(lambda l : printf(">> RX " + self.ser.port + " > " + l))
+
+
 
     # Prints the help menu for the serial Cli
     def help(self):
@@ -204,7 +217,10 @@ class SerialCli:
         self.ser.close()
         return True
 
-
+    def get_all_input(self,method=None):
+        while self.ser.in_waiting > 0:
+            l = self.ser.readline().strip()
+            if method is not None: method(l)
 
 
 def get_filename_from_user():
@@ -224,3 +240,6 @@ def grbl_init(ser):
     sleep(2)
     ser.flushInput()
     print("> Initializing grbl [SUCCESS]")
+
+def printf(m):
+    print(m)
